@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Prof Dali Nadjib</title>
   <style>
     body {
-      font-family: "Tahoma", sans-serif;
-      background: #f7f9fc;
-      margin: 0;
-      padding: 20px;
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
       text-align: center;
+      padding: 20px;
     }
     h1 {
-      color: #2c3e50;
+      color: #1e40af;
     }
     textarea {
       width: 90%;
@@ -26,7 +25,7 @@
       font-size: 16px;
     }
     button {
-      background: #3498db;
+      background-color: #2563eb;
       color: white;
       border: none;
       padding: 10px 20px;
@@ -35,18 +34,19 @@
       font-size: 16px;
     }
     button:hover {
-      background: #2980b9;
+      background-color: #1d4ed8;
     }
     .result {
       margin-top: 20px;
       padding: 15px;
-      background: white;
+      background: #ffffff;
       border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       max-width: 600px;
       margin-left: auto;
       margin-right: auto;
       text-align: left;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -64,7 +64,7 @@
       const prompt = document.getElementById("prompt").value;
       const resultDiv = document.getElementById("result");
 
-      resultDiv.innerHTML = "⏳ جاري التوليد ...";
+      resultDiv.textContent = "⏳ جاري التوليد ...";
 
       try {
         const response = await fetch("/api/generate", {
@@ -75,12 +75,12 @@
 
         const data = await response.json();
         if (data.text) {
-          resultDiv.innerHTML = "<pre>" + data.text + "</pre>";
+          resultDiv.textContent = data.text;
         } else {
-          resultDiv.innerHTML = "⚠️ لم يتم توليد أي نص.";
+          resultDiv.textContent = "⚠️ لم يتم توليد أي نص.";
         }
       } catch (err) {
-        resultDiv.innerHTML = "❌ خطأ في الاتصال بالسيرفر.";
+        resultDiv.textContent = "❌ خطأ في الاتصال بالسيرفر.";
         console.error(err);
       }
     }
