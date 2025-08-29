@@ -1,0 +1,162 @@
+<!DOCTYPE html><html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Prof — Dali Nadjib</title>
+  <style>
+    :root {
+      --bg: #f4f7fb; /* خلفية فاتحة */
+      --card: #ffffff; /* بطاقات بيضاء */
+      --muted: #6b7280; /* رمادي للنصوص الثانوية */
+      --text: #1f2937; /* نص داكن */
+      --accent: #2563eb; /* أزرق */
+      --accent-2: #10b981; /* أخضر */
+      --danger: #dc2626; /* أحمر */
+      --warning: #d97706; /* برتقالي */
+      --radius: 14px;
+    }body {
+  margin: 0;
+  font-family: "Cairo", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--accent);
+  color: white;
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 1rem;
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.card h2 {
+  margin-top: 0;
+  color: var(--accent);
+}
+
+button {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+button:hover {
+  background: var(--accent-2);
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  margin: 0.3rem 0;
+}
+
+  </style>
+</head>
+<body>
+  <header>AI Prof — Dali Nadjib</header>
+  <div class="container">
+    <div class="card">
+      <h2>📘 إنشاء مذكرة درس</h2>
+      <label>عنوان الدرس</label>
+      <input type="text" id="lessonTitle" />
+      <label>المستوى</label>
+      <input type="text" id="lessonLevel" />
+      <label>مدة الحصة</label>
+      <input type="text" id="lessonDuration" />
+      <button onclick="generateDoc('lesson')">⬇️ تحميل مذكرة</button>
+    </div><div class="card">
+  <h2>📝 إنشاء اختبار</h2>
+  <label>المستوى</label>
+  <input type="text" id="examLevel" />
+  <label>عدد الأسئلة</label>
+  <input type="number" id="examCount" />
+  <button onclick="generateDoc('exam')">⬇️ تحميل اختبار</button>
+</div>
+
+<div class="card">
+  <h2>🏅 إنشاء شهادة تقديرية</h2>
+  <label>اسم الطالب</label>
+  <input type="text" id="studentName" />
+  <button onclick="generateDoc('certificate')">⬇️ تحميل شهادة</button>
+</div>
+
+  </div>  <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.1.0/docx.min.js"></script>  <script>
+    async function generateDoc(type) {
+      const { Document, Packer, Paragraph, TextRun } = docx;
+      let doc;
+
+      if (type === "lesson") {
+        const title = document.getElementById("lessonTitle").value;
+        const level = document.getElementById("lessonLevel").value;
+        const duration = document.getElementById("lessonDuration").value;
+        doc = new Document({
+          sections: [{
+            children: [
+              new Paragraph({ text: "مذكرة درس", heading: "Heading1" }),
+              new Paragraph(`العنوان: ${title}`),
+              new Paragraph(`المستوى: ${level}`),
+              new Paragraph(`المدة: ${duration}`)
+            ]
+          }]
+        });
+      }
+
+      if (type === "exam") {
+        const level = document.getElementById("examLevel").value;
+        const count = document.getElementById("examCount").value;
+        let questions = [];
+        for (let i = 1; i <= count; i++) {
+          questions.push(new Paragraph(`${i}) ...............؟`));
+        }
+        doc = new Document({
+          sections: [{
+            children: [
+              new Paragraph({ text: `اختبار - المستوى ${level}`, heading: "Heading1" }),
+              ...questions
+            ]
+          }]
+        });
+      }
+
+      if (type === "certificate") {
+        const name = document.getElementById("studentName").value;
+        doc = new Document({
+          sections: [{
+            children: [
+              new Paragraph({ text: "شهادة تقديرية", heading: "Heading1" }),
+              new Paragraph(`يُمنح الطالب ${name} هذه الشهادة تقديراً لجهوده.`)
+            ]
+          }]
+        });
+      }
+
+      const blob = await Packer.toBlob(doc);
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `${type}.docx`;
+      a.click();
+    }
+  </script></body>
+</html>
