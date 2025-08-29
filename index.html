@@ -1,45 +1,87 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Prof Dali Nadjib</title>
   <style>
-    body { font-family: Tahoma, Arial, sans-serif; background:#e6f2ff; text-align:center; padding:20px; }
-    h1 { color:#004080; }
-    textarea { width:80%; height:120px; margin:10px; padding:10px; border-radius:8px; border:1px solid #aaa; }
-    button { padding:12px 25px; background:#008000; color:white; font-size:16px; border:none; border-radius:10px; cursor:pointer; }
-    button:hover { background:#006600; }
-    #result { margin-top:20px; padding:15px; background:#fff; border-radius:8px; box-shadow:0 0 5px rgba(0,0,0,0.2); text-align:right; direction:rtl; }
+    body {
+      font-family: "Tahoma", sans-serif;
+      background: #f7f9fc;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    textarea {
+      width: 90%;
+      max-width: 500px;
+      height: 120px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
   <h1>📘 AI Prof Dali Nadjib</h1>
   <p>أدخل موضوع المذكرة أو نوع الاختبار:</p>
-  <textarea id="prompt" placeholder="مثال: أنشئ اختبار في الرياضيات حول المعادلات..."></textarea><br>
+  <textarea id="prompt" placeholder="مثال: اختبار رياضيات سنة رابعة متوسط"></textarea>
+  <br>
   <button onclick="generate()">إنشاء</button>
 
-  <div id="result"></div>
+  <div class="result" id="result">⚠️ لم يتم توليد أي نص بعد</div>
 
   <script>
     async function generate() {
       const prompt = document.getElementById("prompt").value;
       const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = "⏳ جاري الإنشاء...";
+
+      resultDiv.innerHTML = "⏳ جاري التوليد ...";
 
       try {
-        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCjeq7XI1uM2q9fkH1lVemkjhfAjfTVp1k", {
+        const response = await fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
-          })
+          body: JSON.stringify({ prompt }),
         });
 
         const data = await response.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "⚠️ لم يتم توليد أي نص.";
-        resultDiv.innerHTML = `<b>📄 النتيجة:</b><br>${text.replace(/\n/g, "<br>")}`;
-      } catch (error) {
-        resultDiv.innerHTML = "❌ خطأ أثناء الاتصال بالـ API.";
+        if (data.text) {
+          resultDiv.innerHTML = "<pre>" + data.text + "</pre>";
+        } else {
+          resultDiv.innerHTML = "⚠️ لم يتم توليد أي نص.";
+        }
+      } catch (err) {
+        resultDiv.innerHTML = "❌ خطأ في الاتصال بالسيرفر.";
+        console.error(err);
       }
     }
   </script>
